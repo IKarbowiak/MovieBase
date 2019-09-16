@@ -1,25 +1,23 @@
 import requests
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import generics
 
-from .models import Movie, Director
-from .serializers.movie_serializer import MovieSerializer
+from .models import Movie
+from .serializers import MovieSerializer
 from moviebase.settings import OMDBAPI_KEY
 
 
 # TODO !! Put somewhere else aPI key!!!
 
-class MoviesList(APIView):
+class MoviesList(generics.ListCreateAPIView):
     omdbapi_url = 'http://www.omdbapi.com/?apikey={}&t={}'
+    queryset = Movie.objects.all().order_by('title')
+    serializer_class = MovieSerializer
 
-    def get(self, request, format=None):
-        movies = Movie.objects.all().order_by('title')
-        serializer = MovieSerializer(movies, many=True)
-        return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request, *args, **kwargs):
         movie_title = request.data['title']
 
         movie = Movie.objects.filter(title=movie_title).first()
@@ -49,4 +47,5 @@ class MoviesList(APIView):
                 value = [{'full_name': name} for name in value.split(', ')]
             data[key.lower()] = value
         return data
+
 

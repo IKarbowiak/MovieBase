@@ -1,12 +1,10 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views import MoviesList
+from .views import CommentListView
 
 urlpatterns = [
-    path('', MoviesList.as_view()),
-    # path('comments/', name='comments'),
-    # path('top/', name='top'),
+    path('', CommentListView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

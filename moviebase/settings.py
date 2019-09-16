@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'movie',
+    'comment',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +124,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 OMDBAPI_KEY = '99a1a47c'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Movie, Director
+from .models import Movie, Director
 
 
 class DirectorSerializer(serializers.ModelSerializer):
