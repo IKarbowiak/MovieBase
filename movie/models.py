@@ -10,7 +10,7 @@ class Movie(models.Model):
 
 class Director(models.Model):
     full_name = models.CharField(max_length=50)
-    movies = models.ManyToManyField(Movie)
+    movies = models.ManyToManyField(Movie, related_name='directors')
 
 
 class Comment(models.Model):
