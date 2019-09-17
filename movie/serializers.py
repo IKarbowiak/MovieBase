@@ -26,12 +26,10 @@ class MovieSerializer(serializers.ModelSerializer):
 
 
 class TopMoviesSerializer(serializers.ModelSerializer):
-    comment_count = serializers.SerializerMethodField()
+    total_comments = serializers.IntegerField()
     rank = serializers.IntegerField()
+    movie_id = serializers.IntegerField(source='pk')
 
     class Meta:
         model = Movie
-        fields = ['id', 'comment_count', 'rank']
-
-    def get_comment_count(self, obj):
-        return obj.comments.all().count()
+        fields = ['movie_id', 'total_comments', 'rank']

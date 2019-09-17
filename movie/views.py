@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.db.models.expressions import Window
 from django.db.models.functions.window import DenseRank
 from rest_framework.response import Response
@@ -66,10 +66,10 @@ class TopMovieViewSet(generics.ListAPIView):
         date_to = datetime.strptime(date_to, '%Y-%m-%d')
 
         queryset = self.get_queryset()
-        queryset = queryset.filter(comments__created_date__gte=date_from, comments__created_date__lt=date_to)
 
-        queryset = queryset.annotate(total_comments=Count('comments'))\
-            .order_by('total_comments')\
+        queryset = queryset.annotate(total_comments=Count('comments', filter=(Q(comments__created_date__gte=date_from) \
+									      & Q(comments__created_date__lt=date_to))))\
+            .order_by('-total_comments')\
             .annotate(rank=Window(expression=DenseRank(), order_by=F('total_comments').desc()))
 
         serializer = TopMoviesSerializer(queryset, many=True)
