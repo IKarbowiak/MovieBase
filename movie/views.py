@@ -1,21 +1,25 @@
-import requests
+from datetime import datetime
 
+from django.db.models import Count, F
+from django.db.models.expressions import Window
+from django.db.models.functions.window import DenseRank
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+import requests
+
 
 from .models import Movie
-from .serializers import MovieSerializer
+from .serializers import MovieSerializer, TopMoviesSerializer
 from moviebase.settings import OMDBAPI_KEY
 
 
 # TODO !! Put somewhere else aPI key!!!
 
-class MoviesList(generics.ListCreateAPIView):
+class MoviesListViewSet(generics.ListCreateAPIView):
     omdbapi_url = 'http://www.omdbapi.com/?apikey={}&t={}'
     queryset = Movie.objects.all().order_by('title')
     serializer_class = MovieSerializer
-
 
     def post(self, request, *args, **kwargs):
         movie_title = request.data['title']
@@ -49,3 +53,24 @@ class MoviesList(generics.ListCreateAPIView):
         return data
 
 
+class TopMovieViewSet(generics.ListAPIView):
+    queryset = Movie.objects.all().prefetch_related('comments')
+    serializer_class = TopMoviesSerializer
+
+    def list(self, request, *args, **kwargs):
+        date_from = request.query_params.get('date_from', None)
+        date_to = request.query_params.get('date_to', None)
+        if not date_from or not date_to:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        date_from = datetime.strptime(date_from, '%Y-%m-%d')
+        date_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+        queryset = self.get_queryset()
+        queryset = queryset.filter(comments__created_date__gte=date_from, comments__created_date__lt=date_to)
+
+        queryset = queryset.annotate(total_comments=Count('comments'))\
+            .order_by('total_comments')\
+            .annotate(rank=Window(expression=DenseRank(), order_by=F('total_comments').desc()))
+
+        serializer = TopMoviesSerializer(queryset, many=True)
+        return Response(serializer.data)

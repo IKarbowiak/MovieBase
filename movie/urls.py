@@ -1,12 +1,11 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views import MoviesList
+from .views import MoviesListViewSet, TopMovieViewSet
 
 urlpatterns = [
-    path('', MoviesList.as_view()),
-    # path('comments/', name='comments'),
-    # path('top/', name='top'),
+    path('movies/', MoviesListViewSet.as_view()),
+    path('top/', TopMovieViewSet.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

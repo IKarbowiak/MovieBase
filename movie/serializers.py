@@ -23,3 +23,15 @@ class MovieSerializer(serializers.ModelSerializer):
             director, _ = Director.objects.get_or_create(**director_data)
             director.movies.add(movie)
         return movie
+
+
+class TopMoviesSerializer(serializers.ModelSerializer):
+    comment_count = serializers.SerializerMethodField()
+    rank = serializers.IntegerField()
+
+    class Meta:
+        model = Movie
+        fields = ['id', 'comment_count', 'rank']
+
+    def get_comment_count(self, obj):
+        return obj.comments.all().count()
