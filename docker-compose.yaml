@@ -9,6 +9,14 @@ services:
         - /dev/shm
     ports:
         - "127.0.0.1:5432:5432"
+  web:
+    build: .
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: movies_service
+    volumes:
+      - .:/movies_service
+    ports:
+      - "8000:8000"
 volumes:
   pgdata:
   
