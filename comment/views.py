@@ -22,12 +22,8 @@ class CommentListView(generics.ListAPIView):
     queryset = Comment.objects.all()
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
         serializer = CommentSerializer(data=request.data, many=False)
-        print(serializer.is_valid())
         if serializer.is_valid():
-            print("Here")
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
