@@ -1,10 +1,13 @@
+import datetime
 from unittest import mock
 
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
 
 from movie.models import Movie
-from movie.views import MoviesListViewSet
+from movie.views import MoviesListViewSet, TopMovieViewSet
+from comment.models import Comment
+
 
 factory = APIRequestFactory()
 
@@ -123,3 +126,59 @@ class MovieListViewSetTest(TestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 417)
+
+
+class TopMoviesViewSetTest(TestCase):
+    def test_post_without_parameters(self):
+        # GIVEN
+        movie = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre')
+        Comment.objects.create(movie=movie, body='Test comment')
+
+        # WHEN
+        view = TopMovieViewSet.as_view()
+        request = factory.get('/', )
+        response = view(request)
+
+        # THEN
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_with_parameters(self):
+        # GIVEN
+        movie = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre', pk=1)
+
+        comment1 = Comment.objects.create(movie=movie, body='Test comment')
+        comment1.created_date = datetime.date(1000, 1, 14)
+        comment1.save()
+
+        movie2 = Movie.objects.create(title='TestTitle2', year=111, plot='TetPlot1', genre='TestGenre', pk=2)
+
+        comment2 = Comment.objects.create(movie=movie2, body='Test comment')
+        comment2.created_date = datetime.date(1000, 1, 15)
+        comment2.save()
+
+        comment3 = Comment.objects.create(movie=movie2, body='Test comment')
+        comment3.created_date = datetime.date(1000, 1, 17)
+        comment3.save()
+
+        movie3 = Movie.objects.create(title='TestTitle3', year=111, plot='TetPlot1', genre='TestGenre', pk=3)
+
+        comment4 = Comment.objects.create(movie=movie3, body='Test comment')
+        comment4.created_date = datetime.date(1000, 1, 17)
+        comment4.save()
+
+        comment5 = Comment.objects.create(movie=movie3, body='Test comment')
+        comment5.created_date = datetime.date(1000, 1, 1)
+        comment5.save()
+
+        movie4 = Movie.objects.create(title='TestTitle4', year=111, plot='TetPlot1', genre='TestGenre', pk=4)
+
+        # WHEN
+        view = TopMovieViewSet.as_view()
+        request = factory.get('/', {'date_from': '1000-1-12', 'date_to': '1000-1-20'})
+        response = view(request)
+
+        # THEN
+        result = [{'movie_id': 2, 'total_comments': 2, 'rank': 1}, {'movie_id': 3, 'total_comments': 1, 'rank': 2}, {'movie_id': 1, 'total_comments': 1, 'rank': 2}, {'movie_id': 4, 'total_comments': 0, 'rank': 3}]
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(result, response.data)
+
