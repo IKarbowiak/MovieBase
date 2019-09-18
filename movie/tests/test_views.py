@@ -8,8 +8,50 @@ from movie.views import MoviesListViewSet
 
 factory = APIRequestFactory()
 
+example_data = {"Title": "TestTitle", "Year": "1997", "Rated": "PG-13", "Released": "19 Dec 1997",
+                "Runtime": "194 min", "Genre": "Drama, Romance", "Director": "James Cameron",
+                "Writer": "James Cameron", "Actors": "Leonardo DiCaprio, Kate Winslet, "
+                                                     "Billy Zane, Kathy Bates",
+                "Plot": "A seventeen-year-old aristocrat falls in love with a kind but poor artist aboard "
+                        "the luxurious, ill-fated R.M.S. Titanic.", "Language": "English, Swedish, Italian",
+                "Country": "USA", "Awards": "Won 11 Oscars. Another 111 wins & 77 nominations.",
+                "Poster": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTU"
+                          "tMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg",
+                "Ratings": [{"Source": "Internet Movie Database", "Value": "7.8/10"},
+                            {"Source": "Rotten Tomatoes", "Value": "89%"}, {"Source": "Metacritic",
+                                                                            "Value": "75/100"}],
+                "Metascore": "75", "imdbRating": "7.8", "imdbVotes": "967,946", "imdbID": "tt0120338",
+                "Type": "movie", "DVD": "10 Sep 2012", "BoxOffice": "N/A", "Production": "Paramount Pictures",
+                "Website": "http://www.titanicmovie.com/", "Response": "True"}
+
+
+def mocked_requests_get(self, *args, **kwargs):
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    return MockResponse(example_data, 200)
+
+
+def mocked_requests_response_false(self, *args, **kwargs):
+    class MockResponse:
+        def __init__(self, json_data, status_code):
+            json_data['Response'] = 'False'
+            self.json_data = json_data
+            self.status_code = status_code
+
+        def json(self):
+            return self.json_data
+
+    return MockResponse(example_data, 200)
+
 
 class MovieListViewSetTest(TestCase):
+
     def test_get_method(self):
         # GIVEN
         m1 = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre')
@@ -25,3 +67,59 @@ class MovieListViewSetTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['count'], 2)
         self.assertSetEqual({m1.title, m2.title}, {movie['title'] for movie in response.data['results']})
+
+    @mock.patch('movie.views.requests')
+    def test_post_method(self, requests_mock):
+        # GIVEN
+        requests_mock.get = mocked_requests_get
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.post('/', data={'title': 'TestTitle'}, format='json')
+        response = view(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertSetEqual(set(response.data.keys()), {'movie_object', 'externalAPI_data'})
+        self.assertEqual(Movie.objects.all().count(), 1)
+
+        movie = Movie.objects.all()[0]
+        self.assertEqual(movie.title, 'TestTitle')
+
+    @mock.patch('movie.views.requests')
+    def test_post_method_for_existing_title(self, requests_mock):
+        # GIVEN
+        requests_mock.get = mocked_requests_get
+        Movie.objects.create(title='TestTitle', year=111, plot='TetPlot', genre='TestGenre')
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.post('/', data={'title': 'TestTitle'}, format='json')
+        response = view(request)
+
+        self.assertEqual(response.status_code, 409)
+
+    @mock.patch('movie.views.requests')
+    def test_post_method_for_response_false_from_external_api(self, requests_mock):
+        # GIVEN
+        requests_mock.get = mocked_requests_response_false
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.post('/', data={'title': 'TestTitle'}, format='json')
+        response = view(request)
+
+        self.assertEqual(response.status_code, 404)
+
+    @mock.patch('movie.views.MovieSerializer')
+    @mock.patch('movie.views.requests')
+    def test_post_method_for_existing_title(self, requests_mock, serializer_mock):
+        # GIVEN
+        requests_mock.get = mocked_requests_get
+        serializer_mock().is_valid = lambda: False
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.post('/', data={'title': 'TestTitle'}, format='json')
+        response = view(request)
+
+        self.assertEqual(response.status_code, 417)

@@ -28,7 +28,6 @@ class MoviesListViewSet(generics.ListCreateAPIView):
         if movie:
             return Response(status=status.HTTP_409_CONFLICT)
         movie_detail = requests.get(self.omdbapi_url.format(OMDBAPI_KEY, movie_title)).json()
-
         if movie_detail['Response'] == 'False':
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = MovieSerializer(data=self.prepare_data_for_serializer(movie_detail))
@@ -67,8 +66,8 @@ class TopMovieViewSet(generics.ListAPIView):
 
         queryset = self.get_queryset()
 
-        queryset = queryset.annotate(total_comments=Count('comments', filter=(Q(comments__created_date__gte=date_from) \
-									      & Q(comments__created_date__lt=date_to))))\
+        queryset = queryset.annotate(total_comments=Count('comments', filter=(Q(comments__created_date__gte=date_from)
+                                                                              & Q(comments__created_date__lt=date_to))))\
             .order_by('-total_comments')\
             .annotate(rank=Window(expression=DenseRank(), order_by=F('total_comments').desc()))
 
