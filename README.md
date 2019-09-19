@@ -6,7 +6,7 @@ of movies based on numbers of comment for specific time period.
 ## Run app
 To run the application you need docker and that's all.
 
-Just download repository, go to the main folder where docker-compose.yml file
+Just download repository, go to the main folder where docker-compose.yaml file
 is located and run:
 ```bash
 $ docker-compose up --build
