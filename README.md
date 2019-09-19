@@ -29,6 +29,11 @@ With MovieBase API you can list existing movies, comments and also add new ones.
 - To list all comments got to:
 
     https://moviebase-igakar.herokuapp.com/comments/
+  
+  You can also filter comments by specific `movie_id` just add **movie_id** as a parameters.
+  For example to finds all comments for movie with `id = 1`:
+  
+  https://moviebase-igakar.herokuapp.com/comments/?movie_id=1
 
 - To get the movie rank you must specify `date_from` and `date_to` parameters 
 in format `YYYY-MM-DD (year-month-day)` like:
@@ -43,3 +48,21 @@ in case is not it will be added. The data about movies are download from [OMDb A
 To create comment you must sent `POST` http request to  https://moviebase-igakar.herokuapp.com/comments/
 with `'movie_id'` and `'body'` parameters which refer accordingly to **movie id**
 of existing movie and content of comment.
+
+## Test application
+If you want to test app, run docker in detach mode:
+```bash
+$ docker-compose up --build -d
+```
+
+Then start bash session in container:
+```bash
+$ sudo docker exec -it container_name bash
+```
+
+To run tests you must be in directory with `manage.py` file and run:
+```bash
+$ python3 manage.py test
+```
+
+
