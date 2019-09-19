@@ -40,6 +40,11 @@ class CommentListViewTest(TestCase):
         response = view(request)
 
         # THEN
+        comments = Comment.objects.all()
+        self.assertEqual(comments.count(), 1)
+
+        data['created_date'] = comments[0].created_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
+
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(data, response.data)
 

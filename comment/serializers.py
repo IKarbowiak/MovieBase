@@ -7,10 +7,11 @@ from movie.models import Movie
 
 class CommentSerializer(serializers.ModelSerializer):
     movie_id = serializers.IntegerField()
+    created_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S.%f%z", read_only=True)
 
     class Meta:
         model = Comment
-        fields = ['movie_id', 'body']
+        fields = ['movie_id', 'body', 'created_date']
 
     def create(self, validated_data):
         movie_id = validated_data.pop('movie_id')

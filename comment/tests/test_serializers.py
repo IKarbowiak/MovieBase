@@ -18,6 +18,7 @@ class CommentSerializerTest(TestCase):
 
         # THEN
         data['movie_id'] = movie.id
+        data['created_date'] = comment.created_date.strftime("%Y-%m-%d %H:%M:%S.%f%z")
         self.assertDictEqual(serializer.data, data)
 
     def test_contains_expected_fields_for_correct_data_with_data(self):

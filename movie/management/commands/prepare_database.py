@@ -84,5 +84,5 @@ class Command(BaseCommand):
         self.create_comment(movies[1], datetime.date(1990, 5, 20))
         self.create_comment(movies[1], datetime.date(1990, 6, 27), 'Another comment for {}'.format(movies[1].pk))
         self.create_comment(movies[2], datetime.date(1990, 6, 11))
-        self.create_comment(movies[2], datetime.date(1990, 4, 6), 'Another comment for'.format(movies[2].pk))
+        self.create_comment(movies[2], datetime.date(1990, 4, 6), 'Another comment for {}'.format(movies[2].pk))
 
