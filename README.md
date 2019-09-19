@@ -32,10 +32,10 @@ With MovieBase API you can list existing movies, comments and also add new ones.
     `field__icontains` (for case insensitive search). For `year` field you can also
     search for greater value `field__gt` or greater and equal `field__gte`. The same 
     rules for less value (`field__lt` and `field__lte`). 
-    For example to search for movies with contains `Life` in `title` and case insensitive
+    For example to search for movies with contains `Drama` in `genre` and case insensitive
     search use:
      
-     https://moviebase-igakar.herokuapp.com/movies/?title__icontains=life
+     https://moviebase-igakar.herokuapp.com/movies/?genre__icontains=drama
 
 - To list all comments got to:
 
