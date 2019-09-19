@@ -25,6 +25,17 @@ With MovieBase API you can list existing movies, comments and also add new ones.
 - To list all movies got to:
 
     https://moviebase-igakar.herokuapp.com/movies/
+    
+    You can also filter movies by `title, year ans genre` field. 
+    To find exact value for this field use `field__exact` or `field__iexact` 
+    (for case insensitive search). To find part of phrase use `field__contains` or
+    `field__icontains` (for case insensitive search). For `year` field you can also
+    search for greater value `field__gt` or greater and equal `field__gte`. The same 
+    rules for less value (`field__lt` and `field__lte`). 
+    For example to search for movies with contains `Life` in `title` and case insensitive
+    search use:
+     
+     https://moviebase-igakar.herokuapp.com/movies/?title__icontains=life
 
 - To list all comments got to:
 
