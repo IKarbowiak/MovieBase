@@ -8,13 +8,10 @@ from rest_framework import status
 from rest_framework import generics
 import requests
 
-
 from .models import Movie
 from .serializers import MovieSerializer, TopMoviesSerializer
 from moviebase.settings import OMDBAPI_KEY
 
-
-# TODO !! Put somewhere else aPI key!!!
 
 class MoviesListViewSet(generics.ListCreateAPIView):
     omdbapi_url = 'http://www.omdbapi.com/?apikey={}&t={}'

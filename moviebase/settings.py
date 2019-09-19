@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'gxo4*hflw95gku_otf$cwtkj0*l_#i5zq4-&ikp1uu2^7ik0jb'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,18 +79,6 @@ WSGI_APPLICATION = 'moviebase.wsgi.application'
 
 DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'postgres',
-#        'USER': 'postgres',
-#        'PASSWORD': 'testtest',
-#        'HOST': 'postgres',
-#        'PORT': '5432',
-#    },
-#
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -130,7 +118,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-OMDBAPI_KEY = '99a1a47c'
+OMDBAPI_KEY = os.environ['OMDBAPI_KEY']
 
 
 REST_FRAMEWORK = {

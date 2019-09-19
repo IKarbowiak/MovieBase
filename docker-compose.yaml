@@ -16,6 +16,8 @@ services:
     environment:
       PORT: "8080"
       DATABASE_URL: "postgres://postgres:testtest@postgres/postgres"
+      SECRET_KEY: "gxo4*hflw95gku_otf$cwtkj0*l_#i5zq4-&ikp1uu2^7ik0jb"
+      OMDBAPI_KEY: "99a1a47c"
     ports:
       - "8080:8080"
     depends_on:
