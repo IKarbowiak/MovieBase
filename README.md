@@ -1,6 +1,6 @@
 # MovieBase
-MovieBase prove REST API which allows to get list of movies from database, 
-add new movies, add comments to movies, get lists of movies and also the rank
+MovieBase provide REST API which allows to get list of movies from database, 
+add new movies, add comments to movies, get lists of comments and also the rank
 of movies based on numbers of comment for specific time period.
 
 ## Run app
