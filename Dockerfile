@@ -11,4 +11,4 @@ WORKDIR /movies_service
 ADD . /movies_service/
 RUN pip install -r requirements.txt
 EXPOSE $PORT
-CMD bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT"
+CMD bash -c "python manage.py migrate && python manage.py prepare_database && python manage.py runserver 0.0.0.0:$PORT"
