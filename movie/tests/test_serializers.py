@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.test import TestCase
 
 from ..models import Director, Movie
@@ -81,7 +83,8 @@ class MovieSerializerTest(TestCase):
         serializer = MovieSerializer(instance=movie)
 
         # THEN
-        data['directors'] = [{'full_name': director.full_name}]
+        data['directors'] = [OrderedDict([('full_name', director.full_name)])]
+        data['movie_id'] = movie.id
         self.assertDictEqual(data, serializer.data)
 
     def test_contains_expected_fields_for_correct_data_with_data(self):

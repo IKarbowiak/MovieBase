@@ -11,7 +11,7 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     directors = DirectorSerializer(many=True)
-    movie_id = serializers.IntegerField(source='pk')
+    movie_id = serializers.IntegerField(source='pk', read_only=True)
 
     class Meta:
         model = Movie
