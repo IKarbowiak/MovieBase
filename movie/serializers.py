@@ -11,10 +11,11 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     directors = DirectorSerializer(many=True)
+    movie_id = serializers.IntegerField(source='pk')
 
     class Meta:
         model = Movie
-        fields = ['title', 'year', 'genre', 'plot', 'directors']
+        fields = ['movie_id', 'title', 'year', 'genre', 'plot', 'directors']
 
     def create(self, validated_data):
         directors = validated_data.pop('directors')

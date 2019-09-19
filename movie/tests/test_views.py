@@ -178,7 +178,8 @@ class TopMoviesViewSetTest(TestCase):
         response = view(request)
 
         # THEN
-        result = [{'movie_id': 2, 'total_comments': 2, 'rank': 1}, {'movie_id': 3, 'total_comments': 1, 'rank': 2}, {'movie_id': 1, 'total_comments': 1, 'rank': 2}, {'movie_id': 4, 'total_comments': 0, 'rank': 3}]
+        result = [{'movie_id': 2, 'total_comments': 2, 'rank': 1}, {'movie_id': 3, 'total_comments': 1, 'rank': 2}, 
+                  {'movie_id': 1, 'total_comments': 1, 'rank': 2}, {'movie_id': 4, 'total_comments': 0, 'rank': 3}]
         self.assertEqual(response.status_code, 200)
         self.assertListEqual(result, response.data)
 
