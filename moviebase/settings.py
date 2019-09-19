@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import dj_database_url
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -75,17 +77,19 @@ WSGI_APPLICATION = 'moviebase.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'testtest',
-        'HOST': 'postgres',
-        'PORT': '5432',
-    },
+DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'postgres',
+#        'USER': 'postgres',
+#        'PASSWORD': 'testtest',
+#        'HOST': 'postgres',
+#        'PORT': '5432',
+#    },
+#
+# }
 
 
 # Password validation

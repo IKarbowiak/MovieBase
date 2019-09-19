@@ -11,10 +11,11 @@ services:
         - "5432:5432"
   web:
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8080"
-    container_name: movies_service
     volumes:
       - .:/movies_service
+    environment:
+      PORT: "8080"
+      DATABASE_URL: "postgres://postgres:testtest@postgres/postgres"
     ports:
       - "8080:8080"
     depends_on:
