@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db.models import Count, F, Q
 from django.db.models.expressions import Window
 from django.db.models.functions.window import DenseRank
+from django_filters import rest_framework as filters
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
@@ -13,10 +14,21 @@ from .serializers import MovieSerializer, TopMoviesSerializer
 from moviebase.settings import OMDBAPI_KEY
 
 
+class MovieFilter(filters.FilterSet):
+    class Meta:
+        model = Movie
+        fields = {'title': ['exact', 'iexact', 'contains', 'icontains'],
+                  'genre': ['exact', 'iexact',  'contains', 'icontains'],
+                  'year': ['exact', 'contains', 'gte', 'lte', 'gt', 'lt']}
+
+
 class MoviesListViewSet(generics.ListCreateAPIView):
     omdbapi_url = 'http://www.omdbapi.com/?apikey={}&t={}'
     queryset = Movie.objects.all().order_by('title')
     serializer_class = MovieSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = MovieFilter
+
 
     def post(self, request, *args, **kwargs):
         movie_title = request.data['title']

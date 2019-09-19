@@ -127,6 +127,54 @@ class MovieListViewSetTest(TestCase):
 
         self.assertEqual(response.status_code, 417)
 
+    def test_filter_by_title(self):
+        # GIVEN
+        movie1 = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre')
+        movie2 = Movie.objects.create(title='OtherTitle', year=111, plot='TetPlot1', genre='TestGenre')
+        movie3 = Movie.objects.create(title='TestTitle2', year=111, plot='TetPlot1', genre='TestGenre')
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.get('/', {'title__iexact': 'testtitle1'})
+        response = view(request)
+
+        # THEN
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 1)
+        self.assertSetEqual({res['title'] for res in response.data['results']}, {movie1.title})
+
+    def test_filter_by_year(self):
+        # GIVEN
+        movie1 = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre')
+        movie2 = Movie.objects.create(title='OtherTitle', year=435, plot='TetPlot1', genre='TestGenre')
+        movie3 = Movie.objects.create(title='TestTitle2', year=200, plot='TetPlot1', genre='TestGenre')
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.get('/', {'year__gte': 150})
+        response = view(request)
+
+        # THEN
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 2)
+        self.assertSetEqual({res['title'] for res in response.data['results']}, {movie2.title, movie3.title})
+
+    def test_filter_by_genre(self):
+        # GIVEN
+        movie1 = Movie.objects.create(title='TestTitle1', year=111, plot='TetPlot1', genre='TestGenre1')
+        movie2 = Movie.objects.create(title='OtherTitle', year=111, plot='TetPlot1', genre='OtherGenre')
+        movie3 = Movie.objects.create(title='TestTitle2', year=111, plot='TetPlot1', genre='TestGenre1 and other')
+
+        # WHEN
+        view = MoviesListViewSet.as_view()
+        request = factory.get('/', {'genre__icontains': 'testgenre1'})
+        response = view(request)
+
+        # THEN
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 2)
+        self.assertSetEqual({res['title'] for res in response.data['results']}, {movie1.title, movie3.title})
+
 
 class TopMoviesViewSetTest(TestCase):
     def test_post_without_parameters(self):
