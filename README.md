@@ -57,7 +57,7 @@ $ docker-compose up --build -d
 
 Then start bash session in container:
 ```bash
-$ sudo docker exec -it container_name bash
+$ docker exec -it container_name bash
 ```
 
 To run tests you must be in directory with `manage.py` file and run:
